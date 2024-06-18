@@ -1,0 +1,17 @@
+#FROM definidco su cosa sara basato questo Docker
+#1)RUN aggiorna i pacchetti e installa il server mariadb mettendo a tutto si automaticamente
+#2)RUN commento bind-adress cosi da renderlo accessibile al doker
+#COPY copia mariads.sh al path root
+#3)RUN cmabia permessi a mariadb.shh appena copiato rendendolo eseguibile
+#VOLUME rende un volume /var/lib/mysql rendendolo presistente anche dopo la chiusars
+#EXPOSE espongo 3306 che e la porta di default di mariadb per accettare la connesione del cient
+#ENTRYPOINT all'avvio del conteinr avviero il server mariadb 
+FROM debian:buster-slim
+RUN apt-get update -y && apt-get install -y mariadb-server \
+    && sed -i 's/^binf-adress/#&/' /etc/mysql/mariadb.conf.d/50-server.cnf \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+COPY mariadb.sh /
+RUN chmod 755 /mariadb.sh
+VOLUME [ "/var/lib/mysql" ]
+EXPOSE 3306
+ENTRYPOINT ["mysqld"]

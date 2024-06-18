@@ -1,0 +1,28 @@
+#uso l'immagine debian:buster
+FROM debian:buster
+#aggiorno l'elenco dei pacchetti e scarico ngnx e openssl
+RUN apt update -y && apt install nginx openssl -y && \
+rm -rf /var/lib/apt/lists/*
+#copio il file personalizzato nginx dentro il conteiner
+COPY config.conf /etc/nginx/sites-available/default
+#crea un certificato SSL autofirmato
+#-newkey rsa:2048 crea chiave RSA
+#-node la chiave non sara criptata
+#-day 365 valido per 365 giorni
+#-keyout specifica dove salvare la chiave
+#-out specifica dove salvare il certificato
+#chmod cambio i permessi per tutti
+RUN openssl req -newkey rsa:2048 -nodes -x509 -days 365 \
+        -subj "C=IT/ST=Firenze/L=Firenze/O=sgalli/CN=sgalli.42.fr" \
+        -keyout etc/ssl/key.key \
+        -out etc/ssl/cert.cert && \
+        chmod 600 /etc/ssl/* \
+        && chown -R root:root /etc/ssl/*
+#cambia il propretario dell diretory e sottodirectory var/www/ a www-data(dove si trova ngnix)
+RUN chown -R www-data /var/www/
+#creo un volume per fare persistere cio che si trova in var/www
+VOLUME [ "/var/www/" ]
+#apro all'ascolto 443 (HTTPS)
+EXPOSE 443
+#esegue nginx in primo piano
+CMD ["nginx","-g","deamon off;"]
