@@ -1,19 +1,11 @@
 version: '3'
 
-#mynet: (nome rete)
-#driver: (driver di rete usato per fare comunicare i containter fra loro)
 networks: 
   mynet: 
     driver: bridge
 
 
 
-#volums: (configurazione persistenza dati)
-#driver: (il volume e gestito localmente da docker engine)
-#driver_opts: (configurazione estra per il driver)
-#type: none (gestito da solo)
-#o: (montaggio diretto)
-#device: (percorso da cui montare il volume)
 volumes:
   mariadb:
     driver: local
@@ -30,24 +22,9 @@ volumes:
       device: /home/sgalli/data/wordpress_data
 
 
-
-
-
-
-
-#versione doker(version:)
-#build: (percorso cartella docker)
-#container_name: (nome container)
-#image: (immgaine da usare)
-#ports: (porta da mappare client server)
-#restart: (riavvia sempre container)
-#monto il docker in var/..
-#env_file: (file per le variabili d'ambiente)
-#networks: (collego il container alla mia rete)
-#depens_on: (richiede che sia avviato questo servizio prima di eseguirlo)
 services:
   mariadb: 
-    build: requirements/mariadb/
+    build: ./srcs/requirements/mariadb
     container_name: mariadb
     restart: always
     image: mariadb
@@ -59,7 +36,7 @@ services:
       - mynet
 
   wordpress:
-    build: requirements/wordpress/
+    build: ./srcs/requirements/wordpress
     container_name: wordpress
     image: wordpress
     restart: always
@@ -73,7 +50,7 @@ services:
       - mariadb
 
   nginx:
-    build: requirements/nginx/
+    build: ./srcs/requirements/nginx
     container_name: nginx
     image: nginx
     ports: 
