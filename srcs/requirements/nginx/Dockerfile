@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bullseye
 
 RUN     apt update -y &&\
         apt install -y nginx openssl && \
@@ -19,4 +19,4 @@ VOLUME [ "/var/www/" ]
 
 EXPOSE 443
 
-CMD ["nginx","-g","deamon off;"]
+CMD ["nginx","-g","daemon off;"]

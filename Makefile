@@ -13,3 +13,10 @@ vclean:
 	docker-compose -f $(COMPOSE_FILE) down --volumes --remove-orphans
 	sudo rm -rf $(WORDPRESS_DATA_DIR)/*
 	sudo rm -rf $(MARIADB_DATA_DIR)/*
+
+re:
+	docker-compose -f $(COMPOSE_FILE) down --volumes
+	sudo rm -rf $(WORDPRESS_DATA_DIR)/*
+	sudo rm -rf $(MARIADB_DATA_DIR)/*
+	docker-compose -f $(COMPOSE_FILE) pull
+	docker-compose -f $(COMPOSE_FILE) up --build -d --remove-orphans
