@@ -9,7 +9,7 @@ clean:
 	docker-compose -f $(COMPOSE_FILE) down --remove-orphans
 	docker image prune -a
 
-vclean:
+fclean:
 	docker-compose -f $(COMPOSE_FILE) down --volumes --remove-orphans
 	sudo rm -rf $(WORDPRESS_DATA_DIR)/*
 	sudo rm -rf $(MARIADB_DATA_DIR)/*
@@ -20,3 +20,4 @@ re:
 	sudo rm -rf $(MARIADB_DATA_DIR)/*
 	docker-compose -f $(COMPOSE_FILE) pull
 	docker-compose -f $(COMPOSE_FILE) up --build -d --remove-orphans
+	clear && docker ps

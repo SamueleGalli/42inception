@@ -1,15 +1,12 @@
 FROM debian:bullseye
 
-RUN apt-get update -y && apt-get install -y mariadb-server \
-    && sed -i 's/^binf-adress/#&/' /etc/mysql/mariadb.conf.d/50-server.cnf \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update -y && apt-get install -y mariadb mariadb-client \
 COPY mariadb.sh /
 
-RUN chmod +x /mariadb.sh
+COPY ./conf/my.cnf /etc/my.cnf
+COPY ./conf/mariadb-server.cnf /etc/my.cnf.d/mariadb-server.cnf
+COPY ./tools ./tools
 
-VOLUME [ "/var/lib/mysql" ]
+RUN chmod +x ./tools/setup.sh
 
-EXPOSE 3306
-
-CMD ["/mariadb.sh"]
+CMD [ "./tools/setup.sh" ]
