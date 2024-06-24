@@ -1,73 +1,15 @@
-version: '3.8'
-
-
+version: '3'
 
 services:
-  mariadb: 
-    build: ./srcs/requirements/mariadb
-    ports:
-      - 3306:3306
-    container_name: mariadb
-    restart: always
-    image: mariadb
-    volumes:
-      - mariadb:/var/lib/mysql
-    env_file: 
-      - .env
-    networks:
-      - w_mariadb
-
-  wordpress:
-    build: ./srcs/requirements/wordpress
-    ports:
-      - 9000:9000
-    container_name: wordpress
-    image: wordpress
-    restart: always
-    volumes: 
-      - wordpress:/var/www
-    env_file: 
-      - .env
-    networks: 
-      - w_nginx
-      - w_mariadb
-    depends_on: 
-      - mariadb
-
   nginx:
-    build: ./srcs/requirements/nginx
+    build: ./requirements/nginx
     container_name: nginx
-    image: nginx
     ports: 
-      - 443:443
-    restart: always
+      - "443:443"
     volumes: 
-      - wordpress:/var/www
-    env_file: 
-      - .env
-    networks: 
-      - w_nginx
-    depends_on: 
-      - wordpress
-
-
-networks: 
-  mynet: 
-    driver: bridge
-
-
-
-volumes:
-  mariadb:
-    driver: local
-    driver_opts: 
-      type: none
-      o: bind
-      device: /home/sgalli/data/mariadb_data
-
-  wordpress:
-    driver: local
-    driver_opts: 
-      type: none
-      o: bind
-      device: /home/sgalli/data/wordpress_data
+      - ./srcs/requirements/nginx/conf/:/etc/nginx/http.d/
+      - ./srcs/requirements/nginx/tools:/etc/nginx/ssl/
+      - ./${USER}/data_ngnix/public/html:/var/www/
+    restart: always
+#    depends_on: 
+#      - wordpress
