@@ -11,6 +11,7 @@ services:
       - ./srcs/requirements/nginx/conf/:/etc/nginx/http.d/
       - ./srcs/requirements/nginx/tools:/etc/nginx/ssl/
       - ./${USER}/data_ngnix/public/html:/var/www/
+    container_name: nginx
     restart: always
 #    depends_on: 
 #      - wordpress
@@ -19,15 +20,13 @@ services:
       context: .
       dockerfile: requirements/mariadb/Dockerfile
       args:
-        DB_NAME: mariadb
-        DB_USER: sgalli
-        DB_PASS: 12345
-        DB_ROOT: 12345
+        DB_NAME: ${DB_NAME}
+        DB_USER: ${DB_USER}
+        DB_PASS: ${DB_PASS}
+        DB_ROOT: ${DB_ROOT}
     container_name: mariadb
     ports:
       - "3306:3306"
-    volumes:
-      - db-volume:/var/lib/mysql
+#    volumes:
+#      - db-volume:/var/lib/mysql
     restart: always
-volumes:
-  db-volume:

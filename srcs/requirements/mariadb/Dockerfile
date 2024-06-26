@@ -1,15 +1,17 @@
 FROM debian:bullseye
 
-ARG DB_NAME \
-    DB_USER \
-    DB_PASS \
-    DB_ROOT
+ARG DB_NAME
+ARG DB_USER
+ARG DB_PASS
+ARG DB_ROOT
 
-RUN apt-get update && apt-get install -y mariadb-server mariadb-client && \
+RUN apt-get update && \
+    apt-get install -y mariadb-server mariadb-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /var/run/mysqld && \
+    
+RUN mkdir -p /var/run/mysqld && \
     chmod 777 /var/run/mysqld && \
     { \
         echo '[mysqld]'; \
@@ -17,17 +19,17 @@ RUN mkdir /var/run/mysqld && \
         echo 'skip-name-resolve'; \
         echo 'bind-address=0.0.0.0'; \
     } | tee /etc/mysql/mariadb.conf.d/docker.cnf && \
-    sed -i "s|skip-networking|# skip-networking|g" \
+    sed -i "s|skip-networking|skip-networking=0|g" \
     /etc/mysql/mariadb.conf.d/50-server.cnf
 
-RUN mysql_install_db --user=mysql --datadir=/var/lib/mysql
 
+RUN mysql_install_db --user=mysql --datadir=/var/lib/mysql --rpm --skip-test-db
+    
 EXPOSE 3306
 
-COPY requirements/mariadb/conf/create_db.sh .
-
+COPY /requirements/mariadb/conf/create_db.sh .
 RUN sh create_db.sh && rm create_db.sh
 
 USER mysql
 
-CMD ["/usr/sbin/mysqld", "--skip-log-error"]
+CMD ["mysqld", "--skip-log-error"]
