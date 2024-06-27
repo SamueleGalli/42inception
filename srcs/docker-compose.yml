@@ -8,8 +8,6 @@ services:
     ports: 
       - "443:443"
     volumes: 
-      - ./home/42inception/srcs/requirements/nginx/conf/:/etc/nginx/http.d/
-      - ./home/42inception/srcs/requirements/nginx/tools:/etc/nginx/ssl/
       - wp-volume:/var/www
     container_name: nginx
     restart: always
