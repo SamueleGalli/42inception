@@ -5,7 +5,6 @@ ARG PHP_VERSION=83 \
     DB_USER \
     DB_PASS
 
-
 RUN apk update && apk upgrade && apk add --no-cache \
     php${PHP_VERSION} \
     php${PHP_VERSION}-fpm \
@@ -27,7 +26,7 @@ RUN apk update && apk upgrade && apk add --no-cache \
       /etc/php${PHP_VERSION}/php-fpm.d/www.conf && \
     sed -i "s|;listen.group = nobody|listen.group = nobody|g" \
       /etc/php${PHP_VERSION}/php-fpm.d/www.conf && \
-    rm -f /var/cache/apk/*
+    rm -rf /var/cache/apk/*
 
 WORKDIR /var/www
 
@@ -41,4 +40,4 @@ COPY ./requirements/wordpress/conf/wp-config-create.sh .
 RUN sh wp-config-create.sh && rm wp-config-create.sh && \
     chmod -R 0777 wp-content/
 
-CMD ["/usr/sbin/php-fpm83", "-F"]
+CMD ["php-fpm83", "-F"]
