@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: requirements/nginx/Dockerfile
+    ports: 
+      - "443:443"
+    volumes: 
+      - wp-volume:/var/www
+    container_name: nginx
+    restart: always
+    depends_on: 
+      - wordpress
+    networks:
+      - inception
+
+  mariadb:
+    build:
+      context: .
+      dockerfile: requirements/mariadb/Dockerfile
+      args:
+        DB_NAME: ${DB_NAME}
+        DB_USER: ${DB_USER}
+        DB_PASS: ${DB_PASS}
+        DB_ROOT: ${DB_ROOT}
+    container_name: mariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-volume:/var/lib/mysql
+    restart: always
+    networks:
+      - inception
+
+  wordpress:
+    build:
+      context: .
+      dockerfile: requirements/wordpress/Dockerfile
+      args:
+        DB_NAME: ${DB_NAME}
+        DB_USER: ${DB_USER}
+        DB_PASS: ${DB_PASS}
+    container_name: wordpress
+    restart: always
+    volumes:
+      - wp-volume:/var/www/
+    depends_on:
+      - mariadb
+    networks:
+      - inception
+
+volumes:
+  wp-volume:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/sgalli/data/wordpress
+  
+  db-volume:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/sgalli/data/mariadb
+
+networks:
+  inception:
+    driver: bridge
